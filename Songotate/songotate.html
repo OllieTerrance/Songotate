@@ -6,19 +6,28 @@
             html, body {
                 height: 100%;
             }
-            p, audio, #opts {
+            p, audio, div, ul {
                 display: block;
-                margin: 0 0 5px;
+                margin: 0 0 10px;
             }
         </style>
     </head>
     <body>
-        <p id="intro">Drop a song file here...</p>
+        <p id="intro">Drop a song file on the page to begin...</p>
         <audio id="player" controls></audio>
         <div id="opts">
             <button id="bpm">BPM</button>
             <button id="offset">Offset: 0</button>
+            <button id="offset-seek">&lt;- seek to</button>
         </div>
+        <div id="tags">
+            <input id="tag-name" placeholder="New tag">
+            <button id="tag-from">From: 0</button>
+            <button id="tag-to">To: 0</button>
+            <button id="tag-add"><strong>Add</strong></button>
+            <button id="tag-clear">Clear</button>
+        </div>
+        <ul id="tags-list"></ul>
         <script src="lib/js/jquery.min.js"></script>
         <script>
             // add dataTransfer to jQuery event objects
@@ -34,19 +43,16 @@
                 if (files.length === 0) return;
                 if (files.length > 1) alert("Too many files!  I'll just take the first one...");
                 var file = files[0];
-                console.log(file);
-                window.f = file;
+                window._file = file;
                 if (file.type.substr(0, 6) !== "audio/" && !confirm("This doesn't look like an audio file.  Try anyway?")) return;
                 $("#intro").text(file.name);
                 var reader = new FileReader();
-                reader.onload = function(e) { 
-                    window.e = e;
+                reader.onload = function(e) {
                     $("#player").prop("src", e.target.result);
                 };
                 reader.readAsDataURL(file);
             });
             var bpm = {
-                timeout: 0,
                 diffs: [],
                 last: 0
             };
@@ -73,9 +79,37 @@
                 offset = $("#player").prop("currentTime");
                 $("#offset").text("Offset: " + offset);
             });
+            $("#offset-seek").click(function(e) {
+                $("#player").prop("currentTime", offset);
+            });
+            var tags = [];
+            var tagFrom = 0;
+            $("#tag-from").click(function(e) {
+                tagFrom = $("#player").prop("currentTime");
+                $("#tag-from").text("From: " + tagFrom);
+            });
+            var tagTo = 0;
+            $("#tag-to").click(function(e) {
+                tagTo = $("#player").prop("currentTime");
+                $("#tag-to").text("To: " + tagTo);
+            });
+            $("#tag-add").click(function(e) {
+                tags.push({
+                    name: $("#tag-name").val(),
+                    range: [tagFrom, tagTo]
+                });
+                console.log(tags);
+                $("#tags-list").append($("<li/>").text($("#tag-name").val() + ": " + tagFrom + " -> " + tagTo));
+                $("#tag-name").val("");
+            });
+            $("#tag-clear").click(function(e) {
+                tags = [];
+                $("#tags-list").empty();
+            });
             var beat = true;
             var interval;
             $("#player").on("playing", function(e) {
+                if (!bpm.bpm) return;
                 clearInterval(interval);
                 var atOffset = function() {
                     interval = setInterval(function() {
