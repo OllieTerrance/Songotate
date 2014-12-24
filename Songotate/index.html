@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Songotate</title>
+        <style>
+            html, body {
+                height: 100%;
+            }
+            p, audio, div, ul {
+                display: block;
+                margin: 0 0 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <p id="intro">Drop a song file on the page to begin...</p>
+        <audio id="player" controls></audio>
+        <div id="opts">
+            <button id="bpm">BPM</button>
+            <button id="offset">Offset: 0</button>
+            <button id="offset-seek">&lt;- seek to</button>
+        </div>
+        <div id="tags">
+            <input id="tag-name" placeholder="New tag">
+            <button id="tag-from">From: 0</button>
+            <button id="tag-to">To: 0</button>
+            <button id="tag-add"><strong>Add</strong></button>
+            <button id="tag-clear">Clear</button>
+        </div>
+        <ul id="tags-list"></ul>
+        <script src="lib/js/jquery.min.js"></script>
+        <script src="res/js/songotate.js"></script>
+    </body>
+</html>
