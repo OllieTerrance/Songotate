@@ -3,12 +3,12 @@
     <head>
         <title>Songotate</title>
         <style>
-            html, body {
-                height: 100%;
-            }
             p, audio, div, ul {
                 display: block;
                 margin: 0 0 10px;
+            }
+            button.bf {
+                font-weight: bold;
             }
         </style>
     </head>
@@ -16,16 +16,20 @@
         <p id="intro">Drop a song file on the page to begin...</p>
         <audio id="player" controls></audio>
         <p id="active">No active tags.</p>
-        <div id="opts">
-            <button id="bpm">BPM</button>
-            <button id="offset">Offset: 0</button>
-            <button id="offset-seek">&lt;- seek to</button>
+        <div>
+            <button id="bpm" class="bf">BPM</button>
+            <button id="bpm-double">x2</button>
+            <button id="bpm-half">&divide;2</button>
+        </div>
+        <div>
+            <button id="offset" class="bf">Offset: 0</button>
+            <button id="offset-seek">Seek to</button>
         </div>
         <div id="tags">
             <input id="tag-name" placeholder="New tag">
             <button id="tag-from">From: 0</button>
             <button id="tag-to">To: 0</button>
-            <button id="tag-add"><strong>Add</strong></button>
+            <button id="tag-add" class="bf">Add</button>
             <button id="tag-clear">Clear</button>
         </div>
         <ul id="tags-list"></ul>

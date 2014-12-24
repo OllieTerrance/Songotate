@@ -42,6 +42,16 @@ $("#bpm").click(function(e) {
         $("#bpm").text(bpm.bpm);
     }
 });
+$("#bpm-double").click(function(e) {
+    bpm.time /= 2;
+    bpm.bpm *= 2;
+    $("#bpm").text("BPM: " + Math.round(bpm.bpm));
+});
+$("#bpm-half").click(function(e) {
+    bpm.time *= 2;
+    bpm.bpm /= 2;
+    $("#bpm").text("BPM: " + Math.round(bpm.bpm));
+});
 var offset = 0;
 $("#offset").click(function(e) {
     offset = $("#player").prop("currentTime");
