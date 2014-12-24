@@ -64,7 +64,8 @@ $("#tag-to").click(function(e) {
 $("#tag-add").click(function(e) {
     tags.push({
         name: $("#tag-name").val(),
-        range: [tagFrom, tagTo]
+        from: tagFrom,
+        to: tagTo
     });
     console.log(tags);
     $("#tags-list").append($("<li/>").text($("#tag-name").val() + ": " + tagFrom + " -> " + tagTo));
@@ -75,18 +76,41 @@ $("#tag-clear").click(function(e) {
     $("#tags-list").empty();
 });
 var beat = true;
-var interval;
+var intervals = [];
+function clearIntervals() {
+    while (intervals.length > 0) clearInterval(intervals.pop());
+}
+var activeTags = [];
+function dispActive() {
+    $("#active").text(activeTags.length > 0 ? "Active tags: " + activeTags.join(", ") : "No active tags.");
+}
 $("#player").on("playing", function(e) {
-    if (!bpm.bpm) return;
-    clearInterval(interval);
-    var atOffset = function() {
-        interval = setInterval(function() {
-            beat = !beat;
-            console.log(beat);
-        }, bpm.time);
-    };
+    clearIntervals();
     var time = $("#player").prop("currentTime");
-    setTimeout(atOffset, (offset > time ? offset - time : time / bpm.time) * 1000);
+    if (bpm.bpm) {
+        var atOffset = function() {
+            interval = setInterval(function() {
+                beat = !beat;
+                console.log(beat);
+            }, bpm.time);
+        };
+        setTimeout(atOffset, (time < offset ? offset - time : time / bpm.time) * 1000);
+    }
+    $.each(tags, function(i, tag) {
+        if (time < tag.to) {
+            setTimeout(function() {
+                activeTags.splice(activeTags.indexOf(tag.name), 1);
+                dispActive();
+            }, (tag.to - time) * 1000);
+            var atStart = function() {
+                activeTags.push(tag.name);
+                dispActive();
+            };
+            if (time < tag.from) {
+                setTimeout(atStart, (tag.from - time) * 1000);
+            } else atStart();
+        }
+    });
 }).on("abort emptied pause", function(e) {
-    clearInterval(interval);
+    clearIntervals();
 });
