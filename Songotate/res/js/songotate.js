@@ -29,7 +29,7 @@ $("#bpm").click(function(e) {
     bpm.timeout = setTimeout(function() {
         bpm.diffs = [];
         bpm.last = 0;
-        $("#bpm").text("BPM: " + Math.round(bpm.bpm));
+        $("#bpm").text("BPM: " + bpm.bpm.toFixed(2));
     }, 2000);
     var last = bpm.last;
     bpm.last = (new Date()).getTime();
